@@ -19,7 +19,9 @@ set :rvm_ruby_version, '2.2.0'      # Defaults to: 'default'
 
 namespace :deploy do
   task :chef_client do
-      run "chef-client" 
+      on roles(:web) do |host|
+        run "chef-client" 
+      end
   end
   task :start_app do
     on roles(:web) do |host|
