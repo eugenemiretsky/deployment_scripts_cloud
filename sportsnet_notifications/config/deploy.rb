@@ -2,7 +2,7 @@
 lock '3.3.5'
 
 set :application, 'sportsnet_notifications'
-set :repo_url, 'git@github.com:digitalmedia/sportsnet_notifications.git'
+set :repo_url, 'git@github.com/eugenemiretsky/deployment_scripts_cloud'
 
 set :deploy_user, "sportsnet_data"
 set :deploy_to, '/clients/sportsnet_notifications'
@@ -16,9 +16,11 @@ set :bundle_binstubs, -> { shared_path.join('bin') }
 set :rvm_ruby_version, '2.2.0'      # Defaults to: 'default'
 
 
-before 'bundler:install', "chef123:default"
 
 namespace :deploy do
+  task :chef_client do
+      run "chef-client" 
+  end
   task :start_app do
     on roles(:web) do |host|
       execute "sudo monit start notifications"
@@ -41,6 +43,7 @@ namespace :deploy do
     end
   end
 
+  before 'bundler:install', "chef_client"
   before :starting, :stop
   after :finished, :start_app
   after :finished, :start_queue
